@@ -1,0 +1,36 @@
+<div class="sticky-top">
+<ul class="list-group">
+  <li class="list-group-item list-group-item-action" 
+  [class.active]="!colorFilter"
+  routerLink="/">
+    Colors
+  </li>
+  <li *ngFor="let c of colors" 
+  routerLink="/"
+  [queryParams]="{color:c}"
+  class="list-group-item list-group-item-action" 
+  [class.active]="colorFilter===c">
+  <div class="row">
+      <div class="col"> {{c}} </div> 
+      <span class="dot" [filtercolor]="c"></span>
+  </div>
+  </li>
+</ul>
+<ul class="list-group marginTop10">
+  <li class="list-group-item list-group-item-action">
+    Price
+  </li>
+    <li class="list-group-item list-group-item-action col">
+        <mat-slider
+        class="col"
+        thumbLabel
+        [displayWith]="formatLabel"
+        tickInterval="400"
+        min="100"
+        max="4000"        
+        (change)="onPriceChanged($event)"></mat-slider>
+    </li></ul>
+
+
+
+</div>

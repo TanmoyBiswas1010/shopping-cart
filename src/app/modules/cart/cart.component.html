@@ -1,0 +1,36 @@
+<div class="container marginTop70">
+<h1>Shopping Cart</h1>
+<!-- *ngIf"cartItems" -->
+<ng-container >  
+<p>you have {{totalQuantity}} items in your cart!</p>
+</ng-container>
+<table class="table col-12">
+  <thead>
+<tr>
+  <th>Product</th>
+  <th>Quantity</th>
+  <th>Price</th>
+</tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let item of cartItems">
+      <td>{{item.title}}</td>
+      <td>
+        <div class="row">
+        <mat-icon (click)="removeFromCart(item)">remove</mat-icon> 
+        <p>{{item.quantity || 0}} </p>
+        <mat-icon (click)="addToCart(item)">add</mat-icon>
+      </div></td>
+      <td>{{item.quantity * item.price | currency:'USD':true}}</td>
+    </tr>
+  </tbody>
+<tfoot>
+  <tr>
+    <td></td>
+    <td>TotalPrice :</td>
+    <td>{{totalPrice | currency:'USD':true  }}</td>
+  </tr>
+</tfoot>
+</table>
+<button (click)="clearAll()">Clear All</button>
+</div>

@@ -1,0 +1,40 @@
+<div class="row">
+  <ng-container *ngFor="let product of (products$|async) | productFilter:colorFilter:priceFilter">
+      <div class="col">
+          <div >
+              <div class="card" style="width: 21rem;">
+                <img [src]="product.image" class="card-img-top">
+                <div class="card-body">
+                  <h5 class="card-title">{{product.title}}</h5>
+                  <p class="card-text">{{product.description}}</p> <!--<p>Read More</p>-->
+                  <div class="row">
+                    <div class="col-6">
+                  <p>Price : {{product.price  | currency:'USD':true}}</p>
+                  <p>Stock : {{product.stock.remaining}}</p>
+                  </div>
+                  <div class="col-6">
+                    <div class="row">
+                        <p>Quantity :</p> 
+                        <mat-icon (click)="removeFromCart(product)">remove</mat-icon> 
+                        <p>{{product.quantity || 0}} </p>
+                        <mat-icon (click)="addToCart(product)">add</mat-icon>
+                    </div>
+                  </div>
+                  </div>
+                <div class="row">
+                <div class="col-6">
+                  <button class="btn btn-primary" (click)="addToCart(product)">Add to Cart</button>
+                </div>
+                <div class="col">
+                  <a href="#" class="btn btn-primary">Details</a>
+                </div>
+                </div>
+              </div>
+              </div>
+            </div>
+      </div>
+      <div *ngIf="(i+1)%2===0" class="w-100"></div>
+  </ng-container>
+</div>
+
+

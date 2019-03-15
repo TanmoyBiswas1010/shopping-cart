@@ -2,7 +2,8 @@ import { Component, OnInit, Output } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductStoreService } from '../services/product-store.service';
-import { Iproduct } from '../../../shared/model/product';
+import { ProductsInterface } from '../../../shared/model/products.interface';
+import { UtilityService } from '../../../service/utility.service';
 
 
 @Component({
@@ -11,7 +12,7 @@ import { Iproduct } from '../../../shared/model/product';
   styleUrls: ['./filter.component.css']
 })
 export class FilterComponent implements OnInit {
-  products$: Iproduct[];
+  products$: ProductsInterface[];
   colors = [];
   colorFilter: string;
   priceFilterMin: number;
@@ -20,10 +21,11 @@ export class FilterComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private utilityService: UtilityService,
     private productStoreService: ProductStoreService) { }
 
   ngOnInit() {
-    this.productStoreService.productObservale.subscribe((products: Iproduct[]) => {
+    this.productStoreService.productObservale.subscribe((products: ProductsInterface[]) => {
       products.forEach(product => {
         if (product.price > this.priceFilterMax || !this.priceFilterMax) {
           this.priceFilterMax = product.price;

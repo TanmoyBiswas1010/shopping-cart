@@ -1,33 +1,17 @@
 import { Injectable } from '@angular/core';
-import { Iproduct } from '../shared/model/product';
+import { ProductsInterface } from '../shared/model/products.interface';
 
 @Injectable()
 export class UtilityService {
 
   constructor() { }
 
+  public concatDescription(description: string): string {
+    return description.substr(0, 40).concat('...');
 
-  modifyProductsProperties(products: Iproduct[]): Iproduct[] {
-    products = this.concatDescription(products);
-    products = this.removeCurrencyFromPrice(products);
-
-    return products;
   }
 
-  private concatDescription(products: Iproduct[]): Iproduct[] {
-    products.forEach(product => {
-      product.description = product.description.substr(0, 40).concat('...');
-    });
-    return products;
-  }
-
-  private removeCurrencyFromPrice(products: Iproduct[]): Iproduct[] {
-    products.forEach(product => {
-    product.price =
-      parseFloat(product.price.replace(',', '').replace('$', ''));
-    });
-
-    return products;
-
+  public removeCurrencyFromPrice(price: string): number {
+    return +price.replace(',', '').replace('$', '');
   }
 }

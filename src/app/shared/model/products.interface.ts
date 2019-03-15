@@ -1,14 +1,14 @@
-export interface Iproduct {
+export interface ProductsInterface {
     color: string;
     description: string;
     image: string;
     price: any;
     title: string;
-    stock: Istock[];
+    stock: StockInterface[];
     _id: string;
     quantity: number | undefined;
 }
 
-export interface Istock {
+export interface StockInterface {
     remaining: number;
 }

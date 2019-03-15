@@ -1,27 +1,28 @@
 import { Injectable } from '@angular/core';
-
 import { BehaviorSubject } from 'rxjs';
 import { UtilityService } from '../../../service/utility.service';
-import { Iproduct } from '../../../shared/model/product';
+import { ProductsInterface } from '../../../shared/model/products.interface';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProductStoreService {
 
-  productItemsStore: Iproduct[] = [];
-  private productSubject = new BehaviorSubject<Iproduct[]>(this.productItemsStore);
+  productItemsStore: ProductsInterface[] = [];
+  private productSubject = new BehaviorSubject<ProductsInterface[]>(this.productItemsStore);
   productObservale = this.productSubject.asObservable();
 
   constructor(private utilityService: UtilityService) {
   }
 
-  updateQuantity(product: Iproduct) {
-    debugger;
+  updateQuantity(product: ProductsInterface) {
     if (this.productItemsStore.find(productItem => productItem._id === product._id)) {
-      debugger;
-      this.productItemsStore.forEach(productItem => productItem._id === product._id
-        ? productItem.quantity === product.quantity && productItem.stock['remaining'] === productItem.stock['remaining'] : 1 === 1);
+      this.productItemsStore.forEach(productItem => {
+        if (productItem._id === product._id) {
+          productItem.quantity === product.quantity && productItem.stock['remaining'] === productItem.stock['remaining']
+        }
+      });
     }
     else {
       this.productItemsStore = [...this.productItemsStore, product];
@@ -29,15 +30,14 @@ export class ProductStoreService {
     this.productSubject.next(this.productItemsStore);
   }
 
-  setProducts(products: Iproduct[]) {
+  setProducts(products: ProductsInterface[]) {
     this.productItemsStore = products;
     this.productSubject.next(
-      this.utilityService.modifyProductsProperties(
-        this.productItemsStore));
+      this.productItemsStore);
   }
 
 
-  addToCart(product: Iproduct) {
+  addToCart(product: ProductsInterface) {
     this.productItemsStore.forEach(prod => {
       if (prod._id === product._id && product.stock['remaining'] > 0) {
         if (product.quantity) {
@@ -53,7 +53,7 @@ export class ProductStoreService {
     });
   }
 
-  removeFromCart(product: Iproduct) {
+  removeFromCart(product: ProductsInterface) {
     this.productItemsStore.forEach(prod => {
       if (prod._id === product._id && product.quantity && product.quantity > 0) {
         if (product.quantity) {

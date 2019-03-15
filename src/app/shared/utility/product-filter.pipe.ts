@@ -1,12 +1,14 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Iproduct } from '../model/product';
 import { filter } from 'rxjs/operators';
+import { ProductsInterface } from '../model/products.interface';
+import { UtilityService } from '../../service/utility.service';
 
 @Pipe({
     name: 'productFilter'
 })
 export class ProductFilterPipe implements PipeTransform {
-    transform(products: Iproduct[], ...args: any[]) {
+    constructor(private utilityService: UtilityService) { }
+    transform(products: ProductsInterface[], ...args: any[]) {
         let colorFilter = "";
         let priceFilter = "";
 
@@ -15,14 +17,18 @@ export class ProductFilterPipe implements PipeTransform {
             priceFilter = args[1];
 
             if (colorFilter && priceFilter) {
-                return products.filter(product => product.color === colorFilter && product.price >= priceFilter);
+                return products.filter(product => product.color === colorFilter
+                    && this.utilityService.removeCurrencyFromPrice(product.price) >= +priceFilter);
             }
+
             else if (colorFilter) {
                 return products.filter(product => product.color === colorFilter);
             }
+
             else if (priceFilter) {
-                return products.filter(product => product.price >= priceFilter);
+                return products.filter(product => this.utilityService.removeCurrencyFromPrice(product.price) >= +priceFilter);
             }
+
             else {
                 return products;
             }

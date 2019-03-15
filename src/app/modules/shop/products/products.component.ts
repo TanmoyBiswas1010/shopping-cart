@@ -4,8 +4,9 @@ import { Observable, concat } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { parse } from 'url';
 import { ProductStoreService } from '../services/product-store.service';
-import { Iproduct } from '../../../shared/model/product';
 import { CartService } from '../../cart/services/cart.service';
+import { ProductsInterface } from '../../../shared/model/products.interface';
+import { UtilityService } from '../../../service/utility.service';
 
 @Component({
   selector: 'app-products',
@@ -15,13 +16,14 @@ import { CartService } from '../../cart/services/cart.service';
 export class ProductsComponent implements OnInit {
 
 
-  products$: Observable<Iproduct[]>;
+  products$: Observable<ProductsInterface[]>;
   colorFilter: string;
   priceFilter: number;
 
   constructor(
     private route: ActivatedRoute,
     private cartService: CartService,
+    private utilityService: UtilityService,
     private productStoreService: ProductStoreService) {
 
   }
@@ -38,16 +40,28 @@ export class ProductsComponent implements OnInit {
 
   }
 
-  addToCart(product: Iproduct) {
+  addToCart(product: ProductsInterface) {
     this.productStoreService.addToCart(product);
     this.cartService.updateCart(product);
 
   }
 
-  removeFromCart(product: Iproduct) {
+  removeFromCart(product: ProductsInterface) {
     this.productStoreService.removeFromCart(product);
     this.cartService.updateCart(product);
   }
 
+  concatDescription(description: string) {
+    if (description) {
+      return this.utilityService.concatDescription(description);
+    }
+  }
+
+  removeCurrencyFromPrice(price: string) {
+    if (price) {
+      return this.utilityService.removeCurrencyFromPrice(price);
+    }
+
+  }
 
 }

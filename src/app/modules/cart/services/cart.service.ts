@@ -1,25 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { Iproduct } from '../../../shared/model/product';
 import { ProductStoreService } from '../../shop/services/product-store.service';
-
-
+import { ProductsInterface } from '../../../shared/model/products.interface';
+import { UtilityService } from '../../../service/utility.service';
 
 @Injectable({
     providedIn: 'root'
 })
 export class CartService {
 
-    cartItemsStore: Iproduct[] = [];
-    private cartSubjest = new BehaviorSubject<Iproduct[]>(this.cartItemsStore); // behavir suject initial value
+    cartItemsStore: ProductsInterface[] = [];
+    private cartSubjest = new BehaviorSubject<ProductsInterface[]>(this.cartItemsStore); // behavir suject initial value
     cartObservable = this.cartSubjest.asObservable();
-    public cartItems: Observable<Iproduct[]>;
-    constructor(private productStoreService: ProductStoreService) { }
+    public cartItems: Observable<ProductsInterface[]>;
+    constructor(private productStoreService: ProductStoreService, private utilityService: UtilityService) { }
 
-    updateCart(product: Iproduct) {
+    updateCart(product: ProductsInterface) {
         if (this.cartItemsStore.find(cartItem => cartItem._id === product._id)) {
-            this.cartItemsStore.forEach(cartItem => cartItem._id === product._id
-                ? cartItem.quantity === product.quantity : 1 === 1);
+            
+            this.cartItemsStore.forEach(cartItem => {
+                if (cartItem._id === product._id) {
+                    cartItem.quantity === product.quantity;
+                }
+            });
         }
         else {
             this.cartItemsStore.push(product);
@@ -28,7 +31,7 @@ export class CartService {
         this.cartSubjest.next(this.cartItemsStore);
     }
 
-    addToCart(product: Iproduct) {
+    addToCart(product: ProductsInterface) {
         this.cartItemsStore.forEach(prod => {
             if (prod._id === product._id && product.stock['remaining'] > 0) {
                 if (product.quantity) {
@@ -45,7 +48,7 @@ export class CartService {
         this.updateCart(product);
     }
 
-    removeFromCart(product: Iproduct) {
+    removeFromCart(product: ProductsInterface) {
         this.cartItemsStore.forEach(prod => {
             if (prod._id === product._id && product.quantity && product.quantity > 0) {
                 if (product.quantity) {
@@ -67,7 +70,7 @@ export class CartService {
     }
 
     getTotalPrice() {
-        return this.cartItemsStore.reduce((totalPrice, product) => totalPrice + (product.price * product.quantity), 0);
+        return this.cartItemsStore.reduce((totalPrice, product) => totalPrice + (this.utilityService.removeCurrencyFromPrice(product.price) * product.quantity), 0);
 
     }
     clearAll() {

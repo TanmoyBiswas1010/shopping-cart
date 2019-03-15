@@ -21,7 +21,7 @@
         <p>{{item.quantity || 0}} </p>
         <mat-icon (click)="addToCart(item)">add</mat-icon>
       </div></td>
-      <td>{{item.quantity * item.price | currency:'USD':true}}</td>
+      <td>{{item.quantity * removeCurrencyFromPrice(item.price) | currency:'USD':true}}</td>
     </tr>
   </tbody>
 <tfoot>

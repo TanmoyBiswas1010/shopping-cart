@@ -1,4 +1,34 @@
-<div>
+<div class="container top-buffer">
+    <div class="row">
+    <div class="col-4">
+            <img [src]="product.image" class="img-fluid" width="600rem">
+    </div>
 
-  
-</div>
+        <div class="col">
+            <div><b>{{product.title}}</b></div>
+
+            <div>{{product.description}}</div>
+            <div class="row">
+                    <div class="col-2">Quantity :</div> 
+                    <mat-icon (click)="removeFromCart(product)">remove</mat-icon> 
+                    <p>{{product.quantity || 0}} </p>
+                    <mat-icon (click)="addToCart(product)">add</mat-icon>
+                </div>
+                <div class="row">
+                    <div class="col-2">Price   :</div>
+                    <div>{{product.price}}</div>
+                    </div>
+                    <div class="row">
+                            <div class="col-2">Stock   : </div>
+                            <div>{{product.stock.remaining}}</div>
+                        </div>
+                <div class="row">
+                        <div class="col-2"> {{product.color}} </div> 
+                        <span class="dot" [filtercolor]="product.color"></span>
+                    </div>
+                        <button class="btn btn-primary" (click)="addToCart(product)">Add to Cart</button>
+                      
+        </div>
+        
+    </div>
+    </div>

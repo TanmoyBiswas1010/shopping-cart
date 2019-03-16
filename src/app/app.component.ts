@@ -15,12 +15,14 @@ export class AppComponent implements OnInit {
   constructor(private cartService: CartService, private productService: ProductService) { };
 
   ngOnInit(): void {
-    this.cartService.cartObservable.subscribe(data => {
+    this.cartService.cartService.subscribe(data => {
+      debugger;
       data ? this.setCartQuantity(data) : this.quantity = 0;
     });
   }
 
   setCartQuantity(products: any) {
+    debugger;
     this.quantity = this.cartService.getTotalQuantity();
   }
 }

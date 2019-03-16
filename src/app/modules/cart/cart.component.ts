@@ -16,7 +16,7 @@ export class CartComponent implements OnInit {
   cartItems: ProductsInterface[] = [];
 
   ngOnInit() {
-    this.cartService.cartObservable.subscribe(products => {
+    this.cartService.cartService.subscribe(products => {
       this.cartItems = products;
       if (products) {
         this.totalQuantity = this.cartService.getTotalQuantity();
@@ -30,20 +30,36 @@ export class CartComponent implements OnInit {
 
   }
 
+    /**
+   * @description calls cart service and adds/increase quantity of a product to the cart.
+   * @param product {ProductsInterface} product
+   */
   addToCart(product: ProductsInterface) {
     this.cartService.addToCart(product);
   }
 
+     /**
+   * @description calls cart service and removes/decreases quantity of a product to the cart.
+   * @param product {ProductsInterface} product
+   */
   removeFromCart(product: ProductsInterface) {
     this.cartService.removeFromCart(product);
   }
 
+    /**
+   * @description removing '$' from price.
+   * price is comming as '$100'  from the API.
+   * @param description {description} string
+   */
   removeCurrencyFromPrice(price: string) {
     return this.utilityService.removeCurrencyFromPrice(price);
   }
 
+  /**
+   * @description removes all the prodcts from cart 
+   */
   clearAll() {
-    this.cartItems = undefined;
+    //this.cartItems = undefined;
     this.cartService.clearAll();
 
   }

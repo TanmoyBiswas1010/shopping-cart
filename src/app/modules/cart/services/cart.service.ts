@@ -10,69 +10,73 @@ import { UtilityService } from '../../../service/utility.service';
 export class CartService {
 
     cartItemsStore: ProductsInterface[] = [];
-    private cartSubjest = new BehaviorSubject<ProductsInterface[]>(this.cartItemsStore); // behavir suject initial value
-    cartObservable = this.cartSubjest.asObservable();
+    private cartItemChanged = new BehaviorSubject<ProductsInterface[]>(this.cartItemsStore); // behavir suject initial value
+    cartService = this.cartItemChanged.asObservable();
     public cartItems: Observable<ProductsInterface[]>;
     constructor(private productStoreService: ProductStoreService, private utilityService: UtilityService) { }
 
-    updateCart(product: ProductsInterface) {
+    /**
+     * @description This function is used to add items to the cart.
+     * user adds items in the cart, from cart page using this function
+     * user adds item in the cart, from products page using this function
+     * @param product {ProductsInterface} product
+     */
+    addToCart(product: ProductsInterface) {
         if (this.cartItemsStore.find(cartItem => cartItem._id === product._id)) {
-            
             this.cartItemsStore.forEach(cartItem => {
-                if (cartItem._id === product._id) {
-                    cartItem.quantity === product.quantity;
+                if (cartItem._id === product._id && product.stock['remaining'] > 0) {
+                    debugger;
+                    cartItem.quantity = product.quantity + 1;
+                    this.productStoreService.removeRemainingStock(product);
                 }
             });
         }
         else {
+            product.quantity = 1;
             this.cartItemsStore.push(product);
+            this.productStoreService.removeRemainingStock(product);
         }
-        this.productStoreService.updateQuantity(product);
-        this.cartSubjest.next(this.cartItemsStore);
+
+        this.cartItemChanged.next(this.cartItemsStore);
     }
 
-    addToCart(product: ProductsInterface) {
-        this.cartItemsStore.forEach(prod => {
-            if (prod._id === product._id && product.stock['remaining'] > 0) {
-                if (product.quantity) {
-                    product.quantity = product.quantity + 1;
-                    product.stock['remaining'] = product.stock['remaining'] - 1;
-                }
-                else {
-                    product.quantity = 1;
-                    product.stock['remaining'] = product.stock['remaining'] - 1;
-                }
-
-            }
-        });
-        this.updateCart(product);
-    }
-
+    /**
+     * @description This function is used to remove item from cart.
+     * user remove items from cart page using this function
+     * user remove item from products page using this function
+     * @param product {ProductsInterface} product
+     */
     removeFromCart(product: ProductsInterface) {
-        this.cartItemsStore.forEach(prod => {
-            if (prod._id === product._id && product.quantity && product.quantity > 0) {
-                if (product.quantity) {
-                    product.quantity = product.quantity - 1;
-                    product.stock['remaining'] = product.stock['remaining'] + 1;
+        if (this.cartItemsStore.find(cartItem => cartItem._id === product._id)) {
+            this.cartItemsStore.forEach(cartItem => {
+                if (cartItem._id === product._id && product.quantity > 0) {
+                    cartItem.quantity = product.quantity - 1;
+                    this.productStoreService.addProductStock(product);
                 }
-                else {
-                    product.quantity = 0;
-                    product.stock['remaining'] = product.stock['remaining'] + 1;
-                }
+            });
+        }
+        this.cartItemChanged.next(this.cartItemsStore);
 
-            }
-        });
-        this.updateCart(product);
     }
 
+    /**
+     * @description returns Total number of items present in the cart
+     */
     getTotalQuantity() {
         return this.cartItemsStore.reduce((totalQuantity, product) => totalQuantity + product.quantity, 0);
     }
 
+    /**
+     * @description returns Total Price of items present in the cart
+     */
     getTotalPrice() {
         return this.cartItemsStore.reduce((totalPrice, product) => totalPrice + (this.utilityService.removeCurrencyFromPrice(product.price) * product.quantity), 0);
 
     }
+
+    /**
+     * @description Empty the cart
+     */
     clearAll() {
         this.cartItemsStore.forEach(product => {
             while (product.quantity > 0) {
@@ -81,7 +85,9 @@ export class CartService {
             }
             this.productStoreService.updateQuantity(product);
         });
-        this.cartItemsStore = undefined;
-        this.cartSubjest.next(this.cartItemsStore);
+        while (+this.cartItemsStore.length > 0) {
+            this.cartItemsStore.pop();
+        }
+        this.cartItemChanged.next(this.cartItemsStore);
     }
 }

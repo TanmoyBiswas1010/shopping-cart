@@ -29,9 +29,7 @@ export class ProductsComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    this.products$ = this.productStoreService.productObservale;
-
+    this.products$ = this.productStoreService.productStore;
     this.route.queryParamMap.subscribe(params => {
       this.colorFilter = params.get('color');
       params.has('price') ? this.priceFilter = +params.get('price') : this.priceFilter = undefined;
@@ -40,23 +38,38 @@ export class ProductsComponent implements OnInit {
 
   }
 
+  /**
+   * @description calls cart service and adds/increase quantity of a product to the cart.
+   * @param product {ProductsInterface} product
+   */
   addToCart(product: ProductsInterface) {
-    this.productStoreService.addToCart(product);
-    this.cartService.updateCart(product);
+    this.cartService.addToCart(product);
 
   }
 
+    /**
+   * @description calls cart service and removes/decreases quantity of a product to the cart.
+   * @param product {ProductsInterface} product
+   */
   removeFromCart(product: ProductsInterface) {
-    this.productStoreService.removeFromCart(product);
-    this.cartService.updateCart(product);
+    this.cartService.removeFromCart(product);
   }
 
+  /**
+   * @description showing only 40 characters of description in the products page
+   * @param description {description} string
+   */
   concatDescription(description: string) {
     if (description) {
       return this.utilityService.concatDescription(description);
     }
   }
 
+  /**
+   * @description removing '$' from price.
+   * price is comming as '$100'  from the API.
+   * @param description {description} string
+   */
   removeCurrencyFromPrice(price: string) {
     if (price) {
       return this.utilityService.removeCurrencyFromPrice(price);

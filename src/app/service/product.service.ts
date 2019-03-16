@@ -12,6 +12,9 @@ export class ProductService {
     constructor(private http: HttpClient
         , private productStoreService: ProductStoreService) { }
 
+        /**
+         * Call the API and fetches Produsts data
+         */
     getProducts() {
         this.http.get(UrlEnum.BASE_URL).subscribe((products: ProductsInterface[]) => {
             this.productStoreService.setProducts(products);

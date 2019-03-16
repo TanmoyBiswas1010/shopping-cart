@@ -25,7 +25,9 @@ export class FilterComponent implements OnInit {
     private productStoreService: ProductStoreService) { }
 
   ngOnInit() {
-    this.productStoreService.productObservale.subscribe((products: ProductsInterface[]) => {
+    this.productStoreService.productStore.subscribe((products: ProductsInterface[]) => {
+      
+      //Check for filters in the query params and sets the filter property values
       products.forEach(product => {
         if (product.price > this.priceFilterMax || !this.priceFilterMax) {
           this.priceFilterMax = product.price;
@@ -44,12 +46,20 @@ export class FilterComponent implements OnInit {
     })
   }
 
+  /**
+   * @description This is called when the price slider changes value
+   * @param params  {value} price
+   */
   onPriceChanged({ value }) {
     if (value) {
       this.pushQueryParams({ price: value });
     }
   }
 
+/**
+ * @description adds price as a queryparams to the url
+ * @param params {any} receives price as an object
+ */
   pushQueryParams(params: any) {
     debugger;
     this.router.navigate(
